@@ -1,0 +1,373 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Readmission Prediction</title>
+    <style>
+    
+    .prediction-container {
+      background: #fff;
+      overflow: hidden;
+      padding: 51px 60px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+    
+    .content-wrapper {
+      display: flex;
+      gap: 20px;
+    }
+    
+    .main-section {
+      display: flex;
+      flex-direction: column;
+      line-height: normal;
+      width: 67%;
+    }
+    
+    .prediction-header {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+      color: #000;
+      text-align: center;
+    }
+    
+    .prediction-title {
+      align-self: start;
+      font: 600 32px Poppins, sans-serif;
+      margin: 0;
+      color: #000;
+    }
+    
+    .dataset-container {
+            width: 100%;
+            height: 607px;
+            margin-top: 30px;
+            border: 1px solid rgba(0, 0, 0, 1);
+            overflow: auto; /* Enable scrolling for large tables */
+            position: relative;
+        }
+
+        table.excel-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table.excel-table th, table.excel-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        table.excel-table th {
+            background-color: #f2f2f2;
+        }
+
+        .empty-dataset-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font: 400 24px Inter, sans-serif;
+        }
+
+        .upload-btn {
+            background-color: #a9eeff;
+            box-shadow: 0 4px 4px rgba(58, 57, 57, 0.25);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+        }
+  
+    .empty-dataset-message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font: 400 24px Inter, sans-serif;
+    }
+  
+    @media (max-width: 991px) {
+      .dataset-container {
+        height: 400px;
+      }
+      
+      .empty-dataset-message {
+        font-size: 20px;
+      }
+    }
+  
+    @media (max-width: 480px) {
+      .dataset-container {
+        height: 300px;
+      }
+      
+      .empty-dataset-message {
+        font-size: 16px;
+      }
+    }
+    
+    .controls-section {
+      display: flex;
+      flex-direction: column;
+      line-height: normal;
+      width: 33%;
+      margin-left: 20px;
+    }
+    
+    .action-controls {
+      display: flex;
+      margin-top: 78px;
+      width: 100%;
+      flex-direction: column;
+      color: #000;
+      text-align: center;
+      font: 600 12px Inter, sans-serif;
+    }
+    
+    .upload-btn,
+    .predict-btn {
+      align-self: stretch;
+      border-radius: 15px;
+      font-size: 24px;
+      color: #232121;
+      padding: 18px 24px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      font-family: Inter, sans-serif;
+      font-weight: 600;
+    }
+    
+    .upload-btn {
+      background-color: #a9eeff;
+      box-shadow: 0 4px 4px rgba(58, 57, 57, 0.25);
+    }
+    
+    .predict-btn {
+      background-color: #a49e9e;
+      box-shadow: 0 4px 4px rgba(58, 57, 57, 0.25);
+      margin-top: 30px;
+    }
+    
+    .upload-btn:hover,
+    .predict-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 6px rgba(58, 57, 57, 0.3);
+    }
+    
+    .upload-btn:focus,
+    .predict-btn:focus {
+      outline: 3px solid #4A90E2;
+      outline-offset: 2px;
+    }
+    
+    .legend-title {
+      font-size: 16px;
+      align-self: start;
+      margin-top: 39px;
+      margin-bottom: 24px;
+    }
+    
+    .legend-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .legend-item {
+      display: flex;
+      gap: 13px;
+      align-items: center;
+      min-height: 53px;
+    }
+    
+    .legend-color {
+      flex-shrink: 0;
+      width: 57px;
+      height: 53px;
+      border-radius: 4px;
+    }
+    
+    .legend-color-no {
+      background-color: #a49e9e;
+    }
+    
+    .legend-color-more {
+      background-color: #a9eeff;
+    }
+    
+    .legend-color-less {
+      background-color: #60afc2;
+    }
+    
+    .legend-text {
+      flex: 1;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 1.5;
+      text-align: left;
+    }
+    
+    @media (max-width: 991px) {
+      .prediction-container {
+        padding: 20px;
+      }
+    
+      .content-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 40px;
+      }
+    
+      .main-section,
+      .controls-section {
+        width: 100%;
+        margin-left: 0;
+      }
+    
+      .prediction-header {
+        margin-top: 0;
+      }
+    
+      .upload-section {
+        padding: 100px 20px;
+        min-height: 400px;
+      }
+    
+      .action-controls {
+        margin-top: 40px;
+      }
+    
+      .upload-btn,
+      .predict-btn {
+        padding: 16px 20px;
+        font-size: 20px;
+      }
+    
+      .legend-wrapper {
+        gap: 16px;
+      }
+    
+      .legend-item {
+        min-height: auto;
+      }
+    
+      .legend-color {
+        width: 45px;
+        height: 45px;
+      }
+    
+      .legend-text {
+        font-size: 14px;
+      }
+    }
+    
+    @media (prefers-reduced-motion: reduce) {
+      .upload-btn,
+      .predict-btn {
+        transition: none;
+      }
+    }
+    
+    @media screen and (forced-colors: active) {
+      .legend-color {
+        border: 1px solid CanvasText;
+      }
+      
+      .upload-btn,
+      .predict-btn {
+        border: 1px solid CanvasText;
+      }
+    }
+
+    .excel-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .excel-table th, .excel-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    .excel-table th {
+        background-color: #f2f2f2;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    /* Ensure that the HTML-generated styles from pandas styler are respected */
+    .excel-table tr[style] {
+        transition: background-color 0.3s ease;
+    }
+
+    .excel-table tr:hover {
+        filter: brightness(0.95);
+    }
+    </style>
+</head>
+<body>
+    <div class="prediction-container">
+        <div class="content-wrapper">
+            <section class="main-section" aria-label="Prediction Results">
+                <div class="prediction-header">
+                    <h1 class="prediction-title">Prediction of Readmission (Diabetes)</h1>
+                    
+                    <form method="POST" action="/" enctype="multipart/form-data" id="uploadForm">
+                        <div class="dataset-container" role="status" aria-live="polite">
+                            {% if table_html %}
+                                {{ table_html|safe }}
+                            {% else %}
+                                <div class="empty-dataset-message" id="datasetMessage">No dataset uploaded</div>
+                            {% endif %}
+                        </div>
+                        <input 
+                            type="file" 
+                            name="file" 
+                            id="fileInput" 
+                            accept=".xls,.xlsx" 
+                            style="display: none;" 
+                            onchange="document.getElementById('uploadForm').submit();" 
+                        />
+                    </form>
+                </div>
+            </section>
+            
+            <section class="controls-section" aria-label="Controls and Legend">
+                <div class="action-controls">
+                    <button type="submit" class="upload-btn" onclick="document.getElementById('fileInput').click(); return false;">Upload Dataset</button>
+                    <form action="/predict" method="POST">
+                      <button class="predict-btn" aria-label="Start Prediction">Predict</button>
+                    </form>
+                    
+                    
+                    <h2 class="legend-title">Legend:</h2>
+                    <div class="legend-wrapper">
+                        <div class="legend-item">
+                            <div class="legend-color legend-color-no" role="img" aria-label="No readmission indicator"></div>
+                            <div class="legend-text">No: A label for patients with no record of readmission.</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color legend-color-more" role="img" aria-label="More than 30 days readmission indicator"></div>
+                            <div class="legend-text">>30: A label for patients readmitted after more than 30 days.</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color legend-color-less" role="img" aria-label="Less than 30 days readmission indicator"></div>
+                            <div class="legend-text"><30: A classification label representing patients who are readmitted within 30 days.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+</html>
