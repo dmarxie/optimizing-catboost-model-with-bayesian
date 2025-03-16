@@ -1,68 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diabetes Readmission Prediction</title>
     <style>
-    
-    .prediction-container {
-      background: #fff;
-      overflow: hidden;
-      padding: 51px 60px;
-      max-width: 1440px;
-      margin: 0 auto;
-    }
-    
-    .content-wrapper {
-      display: flex;
-      gap: 20px;
-    }
-    
-    .main-section {
-      display: flex;
-      flex-direction: column;
-      line-height: normal;
-      width: 67%;
-    }
-    
-    .prediction-header {
-      display: flex;
-      width: 100%;
-      flex-direction: column;
-      color: #000;
-      text-align: center;
-    }
-    
-    .prediction-title {
-      align-self: start;
-      font: 600 32px Poppins, sans-serif;
-      margin: 0;
-      color: #000;
-    }
-    
-    .dataset-container {
+        .prediction-container {
+            background: #fff;
+            overflow: hidden;
+            padding: 51px 60px;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        .content-wrapper {
+            display: flex;
+            gap: 20px;
+        }
+
+        .main-section {
+            display: flex;
+            flex-direction: column;
+            line-height: normal;
+            width: 67%;
+        }
+
+        .hidebttn {
+            display: none;
+        }
+
+        .prediction-header {
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+            color: #000;
+            text-align: center;
+        }
+
+        .prediction-title {
+            align-self: start;
+            font: 600 32px Poppins, sans-serif;
+            margin: 0;
+            color: #000;
+        }
+
+        .dataset-container {
             width: 100%;
             height: 607px;
             margin-top: 30px;
-            border: 1px solid rgba(0, 0, 0, 1);
-            overflow: auto; /* Enable scrolling for large tables */
+            border: none;
+            background-color: white;
             position: relative;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
         }
 
-        table.excel-table {
+        .table-scroll-container {
+            overflow-x: auto;
+            overflow-y: auto;
+            flex: 1;
+            position: relative;
+            border-radius: 8px 8px 0 0;
+            background: white;
+        }
+
+        .excel-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
+            background-color: white;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            font-size: 14px;
+            white-space: nowrap;
         }
 
-        table.excel-table th, table.excel-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
+        .excel-table thead {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: white;
+        }
+
+        .excel-table th {
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            font-weight: 500;
+            color: #000;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+            padding: 16px;
             text-align: left;
+            box-shadow: inset 0 -1px 0 #e0e0e0;
+            white-space: nowrap;
         }
 
-        table.excel-table th {
-            background-color: #f2f2f2;
+        .excel-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+            color: #000;
+            font-weight: 400;
+            white-space: nowrap;
+        }
+
+        .excel-table tbody tr:hover {
+            background-color: #f8f9fa;
         }
 
         .empty-dataset-message {
@@ -82,290 +130,796 @@
             border-radius: 5px;
             border: none;
         }
-  
-    .empty-dataset-message {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font: 400 24px Inter, sans-serif;
-    }
-  
-    @media (max-width: 991px) {
-      .dataset-container {
-        height: 400px;
-      }
-      
-      .empty-dataset-message {
-        font-size: 20px;
-      }
-    }
-  
-    @media (max-width: 480px) {
-      .dataset-container {
-        height: 300px;
-      }
-      
-      .empty-dataset-message {
-        font-size: 16px;
-      }
-    }
-    
-    .controls-section {
-      display: flex;
-      flex-direction: column;
-      line-height: normal;
-      width: 33%;
-      margin-left: 20px;
-    }
-    
-    .action-controls {
-      display: flex;
-      margin-top: 78px;
-      width: 100%;
-      flex-direction: column;
-      color: #000;
-      text-align: center;
-      font: 600 12px Inter, sans-serif;
-    }
-    
-    .upload-btn,
-    .predict-btn {
-      align-self: stretch;
-      border-radius: 15px;
-      font-size: 24px;
-      color: #232121;
-      padding: 18px 24px;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      font-family: Inter, sans-serif;
-      font-weight: 600;
-    }
-    
-    .upload-btn {
-      background-color: #a9eeff;
-      box-shadow: 0 4px 4px rgba(58, 57, 57, 0.25);
-    }
-    
-    .predict-btn {
-      background-color: #a49e9e;
-      box-shadow: 0 4px 4px rgba(58, 57, 57, 0.25);
-      margin-top: 30px;
-    }
-    
-    .upload-btn:hover,
-    .predict-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 6px rgba(58, 57, 57, 0.3);
-    }
-    
-    .upload-btn:focus,
-    .predict-btn:focus {
-      outline: 3px solid #4A90E2;
-      outline-offset: 2px;
-    }
-    
-    .legend-title {
-      font-size: 16px;
-      align-self: start;
-      margin-top: 39px;
-      margin-bottom: 24px;
-    }
-    
-    .legend-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    
-    .legend-item {
-      display: flex;
-      gap: 13px;
-      align-items: center;
-      min-height: 53px;
-    }
-    
-    .legend-color {
-      flex-shrink: 0;
-      width: 57px;
-      height: 53px;
-      border-radius: 4px;
-    }
-    
-    .legend-color-no {
-      background-color: #a49e9e;
-    }
-    
-    .legend-color-more {
-      background-color: #a9eeff;
-    }
-    
-    .legend-color-less {
-      background-color: #60afc2;
-    }
-    
-    .legend-text {
-      flex: 1;
-      font-weight: 400;
-      font-size: 12px;
-      line-height: 1.5;
-      text-align: left;
-    }
-    
-    @media (max-width: 991px) {
-      .prediction-container {
-        padding: 20px;
-      }
-    
-      .content-wrapper {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 40px;
-      }
-    
-      .main-section,
-      .controls-section {
-        width: 100%;
-        margin-left: 0;
-      }
-    
-      .prediction-header {
-        margin-top: 0;
-      }
-    
-      .upload-section {
-        padding: 100px 20px;
-        min-height: 400px;
-      }
-    
-      .action-controls {
-        margin-top: 40px;
-      }
-    
-      .upload-btn,
-      .predict-btn {
-        padding: 16px 20px;
-        font-size: 20px;
-      }
-    
-      .legend-wrapper {
-        gap: 16px;
-      }
-    
-      .legend-item {
-        min-height: auto;
-      }
-    
-      .legend-color {
-        width: 45px;
-        height: 45px;
-      }
-    
-      .legend-text {
-        font-size: 14px;
-      }
-    }
-    
-    @media (prefers-reduced-motion: reduce) {
-      .upload-btn,
-      .predict-btn {
-        transition: none;
-      }
-    }
-    
-    @media screen and (forced-colors: active) {
-      .legend-color {
-        border: 1px solid CanvasText;
-      }
-      
-      .upload-btn,
-      .predict-btn {
-        border: 1px solid CanvasText;
-      }
-    }
 
-    .excel-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
+        .empty-dataset-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font: 400 24px Inter, sans-serif;
+        }
 
-    .excel-table th, .excel-table td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-    }
+        @media (max-width: 991px) {
+            .dataset-container {
+                height: 400px;
+            }
 
-    .excel-table th {
-        background-color: #f2f2f2;
-        position: sticky;
-        top: 0;
-        z-index: 10;
-    }
+            .empty-dataset-message {
+                font-size: 20px;
+            }
+        }
 
-    /* Ensure that the HTML-generated styles from pandas styler are respected */
-    .excel-table tr[style] {
-        transition: background-color 0.3s ease;
-    }
+        @media (max-width: 480px) {
+            .dataset-container {
+                height: 300px;
+            }
 
-    .excel-table tr:hover {
-        filter: brightness(0.95);
+            .empty-dataset-message {
+                font-size: 16px;
+            }
+        }
+
+        .controls-section {
+            display: flex;
+            flex-direction: column;
+            line-height: normal;
+            width: 33%;
+            margin-left: 20px;
+        }
+
+        .upload-time {
+            font-size: 14px;
+            color: #555;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+
+        .action-controls {
+            display: flex;
+            margin-top: 78px;
+            width: 100%;
+            flex-direction: column;
+            color: #000;
+            text-align: center;
+            font: 600 12px Inter, sans-serif;
+        }
+
+        .upload-btn,
+        .predict-btn {
+            align-self: stretch;
+            border-radius: 15px;
+            font-size: 24px;
+            color: #232121;
+            padding: 18px 24px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            font-family: Inter, sans-serif;
+            font-weight: 600;
+        }
+
+        .upload-btn {
+            background-color: #a9eeff;
+            box-shadow: 0 4px 4px rgba(58, 57, 57, 0.25);
+        }
+
+        .predict-btn {
+            background-color: #a9eeff;
+            box-shadow: 0 4px 4px rgba(58, 57, 57, 0.25);
+            margin-top: 30px;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .predict-btn.enabled {
+            opacity: 1;
+            cursor: pointer;
+        }
+
+        .upload-btn:hover,
+        .predict-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 6px rgba(58, 57, 57, 0.3);
+        }
+
+        .upload-btn:focus,
+        .predict-btn:focus {
+            outline: 3px solid #4A90E2;
+            outline-offset: 2px;
+        }
+
+        .legend-title {
+            font-size: 16px;
+            align-self: start;
+            margin-top: 39px;
+            margin-bottom: 24px;
+        }
+
+        .legend-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            gap: 13px;
+            align-items: center;
+            min-height: 53px;
+        }
+
+        .legend-color {
+            flex-shrink: 0;
+            width: 57px;
+            height: 53px;
+            border-radius: 4px;
+        }
+
+        .legend-color-no {
+            background-color: #a49e9e;
+        }
+
+        .legend-color-more {
+            background-color: #a9eeff;
+        }
+
+        .legend-color-less {
+            background-color: #60afc2;
+        }
+
+        .legend-text {
+            flex: 1;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        @media (max-width: 991px) {
+            .prediction-container {
+                padding: 20px;
+            }
+
+            .content-wrapper {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 40px;
+            }
+
+            .main-section,
+            .controls-section {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .prediction-header {
+                margin-top: 0;
+            }
+
+            .upload-section {
+                padding: 100px 20px;
+                min-height: 400px;
+            }
+
+            .action-controls {
+                margin-top: 40px;
+            }
+
+            .upload-btn,
+            .predict-btn {
+                padding: 16px 20px;
+                font-size: 20px;
+            }
+
+            .legend-wrapper {
+                gap: 16px;
+            }
+
+            .legend-item {
+                min-height: auto;
+            }
+
+            .legend-color {
+                width: 45px;
+                height: 45px;
+            }
+
+            .legend-text {
+                font-size: 14px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .upload-btn,
+            .predict-btn {
+                transition: none;
+            }
+        }
+
+        @media screen and (forced-colors: active) {
+            .legend-color {
+                border: 1px solid CanvasText;
+            }
+
+            .upload-btn,
+            .predict-btn {
+                border: 1px solid CanvasText;
+            }
+        }
+
+        /* Ensure that the HTML-generated styles from pandas styler are respected */
+        .excel-table tr[style] {
+            transition: background-color 0.3s ease;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.3);
+            border-top: 4px solid #4A90E2;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .selection-group {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 20px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+
+        .selection-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .selection-option input[type="radio"] {
+            display: none;
+        }
+
+        .custom-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 1px solid #000;
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .selection-option input[type="radio"]:checked + .custom-checkbox {
+            background-color: #a9eeff;
+            border-color: #000;
+        }
+
+        .option-label {
+            font-size: 14px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+
+        .stats-container {
+            max-width: 100%;
+            padding: 10px 0;
+            font-family: Poppins, sans-serif;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #000;
+            text-align: center;
+        }
+
+        .stat-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            justify-content: center;
+        }
+
+        .stat-box {
+            background-color: #a9eeff;
+            border-bottom: 2px solid #60afc2;
+            padding: 10px;
+            border-radius: 4px;
+            flex: 1;
+            text-align: center;
+            max-width: 200px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            margin-bottom: 4px;
+            color: #000;
+            font-weight: 400;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .accuracy-box {
+            width: 100%;
+            margin-bottom: 16px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .accuracy-box .stat-value {
+            font-size: 20px;
+        }
+
+        .accuracy-box .stat-label {
+            font-size: 14px;
+        }
+
+        .patient-section, .misclassification-section {
+            margin-top: 20px;
+        }
+
+        .patient-stat, .misclass-stat {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 70px;
+        }
+
+        @media (max-width: 768px) {
+            .stat-row {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .stat-box {
+                width: 100%;
+                max-width: none;
+            }
+        }
+
+        /* Pagination styling */
+        .pagination-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 0;
+            gap: 4px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: white;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .pagination-button,
+        .pagination-number {
+            min-width: 32px;
+            height: 32px;
+            padding: 0 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            color: #333;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+        }
+
+        .pagination-button {
+            padding: 0 16px;
+            gap: 4px;
+        }
+
+        .pagination-number.current {
+            border: 1px solid #333;
+        }
+
+        .pagination-button:hover,
+        .pagination-number:hover {
+            background-color: #f8f9fa;
+        }
+
+        .pagination-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #f8f9fa;
+        }
+
+        .pagination-text {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .current-page {
+            display: none;
+        }
+
+        .accuracy-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .accuracy-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .accuracy-box .stat-label {
+            font-size: 16px;
+            color: #000;
+        }
+        .accuracy-box .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #000;
     }
     </style>
 </head>
+
 <body>
     <div class="prediction-container">
         <div class="content-wrapper">
             <section class="main-section" aria-label="Prediction Results">
                 <div class="prediction-header">
                     <h1 class="prediction-title">Prediction of Readmission (Diabetes)</h1>
-                    
+
                     <form method="POST" action="/" enctype="multipart/form-data" id="uploadForm">
                         <div class="dataset-container" role="status" aria-live="polite">
+                            <div class="table-scroll-container">
                             {% if table_html %}
                                 {{ table_html|safe }}
                             {% else %}
                                 <div class="empty-dataset-message" id="datasetMessage">No dataset uploaded</div>
                             {% endif %}
                         </div>
-                        <input 
-                            type="file" 
-                            name="file" 
-                            id="fileInput" 
-                            accept=".xls,.xlsx" 
-                            style="display: none;" 
-                            onchange="document.getElementById('uploadForm').submit();" 
-                        />
+                        <!-- Pagination Section -->
+                            <div class="pagination-wrapper" id="paginationContainer">
+                            {% include 'pagination.html' %}
+                            </div>
+                        </div>
+
+                        <input type="file" name="file" id="fileInput" accept=".xls,.xlsx,.csv" style="display: none;" />
+                        <button type="button" class="hidebttn" onclick="triggerUpload()"></button>
                     </form>
-                </div>
+
+                    
             </section>
-            
             <section class="controls-section" aria-label="Controls and Legend">
                 <div class="action-controls">
-                    <button type="submit" class="upload-btn" onclick="document.getElementById('fileInput').click(); return false;">Upload Dataset</button>
-                    <form action="/predict" method="POST">
-                      <button class="predict-btn" aria-label="Start Prediction">Predict</button>
-                    </form>
-                    
-                    
+                    <button type="submit" class="upload-btn"
+                        onclick="document.getElementById('fileInput').click(); return false;">Upload Dataset</button>
+                    <button class="predict-btn" id="predictBtn" aria-label="Start Prediction" onclick="handlePredict()" disabled>Predict</button>
+
+
+                    <div class="selection-group" role="group" aria-label="Algorithm Selection">
+                        <div class="selection-option">
+                            <input type="radio" id="catboost" name="algorithm" value="catboost">
+                            <label class="custom-checkbox" for="catboost"></label>
+                            <label class="option-label" for="catboost">Catboost Algorithm</label>
+                        </div>
+                        <div class="selection-option">
+                            <input type="radio" id="bayesian" name="algorithm" value="bayesian">
+                            <label class="custom-checkbox" for="bayesian"></label>
+                            <label class="option-label" for="bayesian">Optimized Catboost Bayesian</label>
+                        </div>
+                    </div>
+
+
                     <h2 class="legend-title">Legend:</h2>
                     <div class="legend-wrapper">
                         <div class="legend-item">
-                            <div class="legend-color legend-color-no" role="img" aria-label="No readmission indicator"></div>
-                            <div class="legend-text">No: A label for patients with no record of readmission.</div>
+                            <div class="legend-color legend-color-no" role="img" aria-label="No readmission indicator">
+                            </div>
+                            <div class="legend-text">No (Prediction = 0): Patients predicted not to be readmitted (gray color)</div>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-color legend-color-more" role="img" aria-label="More than 30 days readmission indicator"></div>
-                            <div class="legend-text">>30: A label for patients readmitted after more than 30 days.</div>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color legend-color-less" role="img" aria-label="Less than 30 days readmission indicator"></div>
-                            <div class="legend-text"><30: A classification label representing patients who are readmitted within 30 days.</div>
+                            <div class="legend-color legend-color-more" role="img"
+                                aria-label="More than 30 days readmission indicator"></div>
+                            <div class="legend-text">Readmitted (Prediction = 1): Patients predicted to be readmitted (blue color)</div>
                         </div>
                     </div>
-                </div>
+                    <main class="stats-container" id="modelAccuracySection" style="display: none;">
+                        <section class="accuracy-section">
+                            <h2 class="section-title">Model Accuracy</h2>
+                            <article class="stat-box accuracy-box">
+                                <div class="accuracy-content">
+                                <strong class="stat-label">Catboost</strong>
+                                    <div class="stat-value">63.234%</div>
+                                </div>
+                            </article>
+                        </section>
+
+                        <section class="patient-section">
+                            <h2 class="section-title">Total Patient Analyze</h2>
+                            <div class="stat-row">
+                                <article class="stat-box patient-stat">
+                                    <div>
+                                        <div class="stat-label">Has Record of Readmission (Readmitted)</div>
+                                        <div class="stat-value">90</div>
+                                    </div>
+                                </article>
+                                <article class="stat-box patient-stat">
+                                    <div>
+                                        <div class="stat-label">No Record of Readmission (No)</div>
+                                        <div class="stat-value">50</div>
+                                    </div>
+                                </article>
+                            </div>
+                        </section>
+
+                        <section class="misclassification-section">
+                            <h2 class="section-title">Misclassification Rate</h2>
+                            <div class="stat-row">
+                                <article class="stat-box misclass-stat">
+                                    <div class="stat-label">Misclassified Cases</div>
+                                    <div class="stat-value">20</div>
+                                </article>
+                                <article class="stat-box misclass-stat">
+                                    <div class="stat-label">Misclassification Rate</div>
+                                    <div class="stat-value">14%</div>
+                                </article>
+                            </div>
+                        </section>
+                    </main>
+
             </section>
         </div>
     </div>
+
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-box">
+            <p id="loadingMessage">Uploading file... Please wait.</p>
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const predictBtn = document.getElementById('predictBtn');
+                const datasetContainer = document.querySelector('.dataset-container');
+            const modelAccuracySection = document.getElementById('modelAccuracySection');
+            const fileInput = document.getElementById('fileInput');
+            const uploadForm = document.getElementById('uploadForm');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingMessage = document.getElementById('loadingMessage');
+
+            // Function to check if dataset exists and enable/disable predict button
+            function updatePredictButton() {
+                const hasDataset = !datasetContainer.querySelector('.empty-dataset-message');
+                predictBtn.disabled = !hasDataset;
+                if (hasDataset) {
+                    predictBtn.classList.add('enabled');
+                } else {
+                    predictBtn.classList.remove('enabled');
+                }
+            }
+
+            // Initial check
+            updatePredictButton();
+
+            // File upload handling
+            fileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    const file = this.files[0];
+                    loadingMessage.innerText = `Processing ${file.name}...`;
+                    loadingOverlay.style.display = 'flex';
+
+                    try {
+                        // Submit the form directly
+                        uploadForm.submit();
+                    } catch (error) {
+                        console.error('Upload error:', error);
+                        loadingOverlay.style.display = 'none';
+                        alert('Error uploading file: ' + error.message);
+                    }
+                }
+            });
+
+            // Function to handle prediction
+            window.handlePredict = function() {
+                const selectedAlgorithm = document.querySelector('input[name="algorithm"]:checked');
+                
+                if (!selectedAlgorithm) {
+                    alert('Please select an algorithm first');
+                    return;
+                }
+
+                loadingMessage.innerText = 'Processing prediction...';
+                loadingOverlay.style.display = 'flex';
+
+                // Make API call to the prediction endpoint
+                fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        algorithm: selectedAlgorithm.value
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    
+                    // Update the accuracy section
+                    const accuracyLabel = document.querySelector('.accuracy-box .stat-label');
+                    const accuracyValue = document.querySelector('.accuracy-box .stat-value');
+                    accuracyLabel.textContent = selectedAlgorithm.value === 'catboost' ? 'Catboost' : 'Optimized Catboost Bayesian';
+                    accuracyValue.textContent = data.accuracy.toFixed(3) + '%';
+
+                    // Update patient statistics
+                    document.querySelector('.patient-stat:nth-child(1) .stat-value').textContent = data.readmitted;
+                    document.querySelector('.patient-stat:nth-child(2) .stat-value').textContent = data.not_readmitted;
+
+                    // Update misclassification statistics
+                    document.querySelector('.misclass-stat:nth-child(1) .stat-value').textContent = data.misclassified;
+                    document.querySelector('.misclass-stat:nth-child(2) .stat-value').textContent = data.misclassification_rate + '%';
+
+                    // Show the results section
+                    modelAccuracySection.style.display = 'block';
+                    modelAccuracySection.scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Apply coloring based on predictions
+                    applyColoringToTable();
+                })
+                .catch(error => {
+                    console.error('Prediction error:', error);
+                    alert('Error during prediction: ' + error.message);
+                })
+                .finally(() => {
+                    loadingOverlay.style.display = 'none';
+                });
+            }
+            
+            // Function to apply coloring to the table based on predictions
+            function applyColoringToTable() {
+                const currentPage = document.querySelector('.current-page')?.value || 1;
+                
+                loadingMessage.innerText = "Applying prediction colors... Please wait.";
+                loadingOverlay.style.display = 'flex';
+                
+                fetch(`/apply-coloring?page=${currentPage}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            throw new Error(data.error);
+                        }
+                        
+                        // Update the table with colored rows
+                        const tableContainer = document.querySelector('.table-scroll-container');
+                        if (tableContainer) {
+                            tableContainer.innerHTML = data.table_html;
+                        }
+                        
+                        // Update pagination controls
+                        const paginationContainer = document.querySelector('.pagination-wrapper');
+                        if (paginationContainer) {
+                            paginationContainer.innerHTML = data.pagination_html;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error applying coloring:', error);
+                    })
+                    .finally(() => {
+                        loadingOverlay.style.display = 'none';
+                    });
+            }
+            
+            // Modified pagination handler to maintain coloring after predictions
+            window.loadPage = function(page) {
+                console.log('Loading page:', page);
+                loadingMessage.innerText = "Loading page... Please wait.";
+                loadingOverlay.style.display = 'flex';
+                
+                // Check if predictions exist in the session
+                const hasPredictions = modelAccuracySection.style.display === 'block';
+                const endpoint = hasPredictions ? `/apply-coloring?page=${page}` : `/paginate?page=${page}`;
+
+                fetch(endpoint)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            throw new Error(data.error);
+                        }
+                        
+                        if (data.table_html) {
+                            // Update the table content
+                            const tableContainer = document.querySelector('.table-scroll-container');
+                            if (tableContainer) {
+                                tableContainer.innerHTML = data.table_html;
+                            }
+                            
+                            // Update pagination controls
+                            const paginationContainer = document.querySelector('.pagination-wrapper');
+                            if (paginationContainer) {
+                                paginationContainer.innerHTML = data.pagination_html;
+                            }
+                            
+                            // Update URL without refreshing the page
+                            const url = new URL(window.location);
+                            url.searchParams.set('page', data.current_page);
+                            window.history.pushState({}, '', url);
+                            
+                            // Scroll to top of table
+                            if (tableContainer) {
+                                tableContainer.scrollTop = 0;
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading page:', error);
+                        alert('Error loading page: ' + error.message);
+                    })
+                    .finally(() => {
+                        loadingOverlay.style.display = 'none';
+                    });
+            }
+
+            // Update predict button when dataset changes
+            const observer = new MutationObserver(updatePredictButton);
+            observer.observe(datasetContainer, {
+                childList: true,
+                subtree: true
+            });
+
+            // Reset model accuracy when new file is uploaded
+            fileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    modelAccuracySection.style.display = 'none';
+                }
+            });
+        });
+        </script>
 </body>
+
 </html>
