@@ -372,7 +372,7 @@ def predict_with_saved_model(data_path, algorithm='catboost', model_path=None):
         # Store original dataframe index
         original_indices = df.index.tolist()
         
-        # Basic preprocessing (assume target column is 'readmitted')
+        # Separate features and target if target exists
         if 'readmitted' in df.columns:
             X = df.drop('readmitted', axis=1)
             y = df['readmitted']
@@ -380,10 +380,6 @@ def predict_with_saved_model(data_path, algorithm='catboost', model_path=None):
             # If no target column, assume all features are for prediction
             X = df
             y = None
-        
-        # Handle categorical features
-        cat_features = X.select_dtypes(include=['object']).columns.tolist()
-        X[cat_features] = X[cat_features].astype(str)
         
         # Load the appropriate model
         if model_path is None:
@@ -397,7 +393,8 @@ def predict_with_saved_model(data_path, algorithm='catboost', model_path=None):
         model = CatBoostClassifier()
         model.load_model(model_path)
         
-        # Make predictions
+        # Make predictions - the model will handle categorical features automatically
+        # as it remembers the feature types from training
         predictions = model.predict(X)
         probabilities = model.predict_proba(X)
         proba_positive = probabilities[:, 1] if len(probabilities.shape) > 1 else probabilities
